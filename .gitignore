@@ -13,3 +13,4 @@ parser/Parser.tab.h
 parser/Parser.tab.o
 parser/libparser.a
 version.h
+build/
