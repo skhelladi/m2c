@@ -31,8 +31,20 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 #--------------------------------------------------------
 # find packages 
+# Set PETSc paths directly
+set(PETSC_DIR "../external/petsc-3.23.3")
+set(PETSC_ARCH "arch-linux-c-opt")
+
+# Add PETSc include directories
+include_directories("${PETSC_DIR}/include")
+include_directories("${PETSC_DIR}/${PETSC_ARCH}/include")
+
+# Add PETSc library directories
+link_directories("${PETSC_DIR}/lib")
+link_directories("${PETSC_DIR}/${PETSC_ARCH}/lib")
+
 if(NOT DEFINED ENV{PETSC_DIR})
-  message(FATAL_ERROR "ERROR: Could not find Petsc. Linux environment variable PETSC_DIR needs to be set. Try 'export PETSC_IDR=[path-to-petsc-build-directory]'.")
+  set(ENV{PETSC_DIR} "${PETSC_DIR}")
 endif()
 
 find_package(PETSc REQUIRED)
@@ -83,6 +95,7 @@ ADD_CUSTOM_COMMAND(
 
 # add include and link directories 
 include_directories("${CMAKE_SOURCE_DIR}")
+include_directories("${CMAKE_BINARY_DIR}")  # for version.h
 include_directories(${CMAKE_SOURCE_DIR}/GeoTools)
 include_directories(${CMAKE_SOURCE_DIR}/MathTools)
 link_directories(${CMAKE_SOURCE_DIR}/parser)
@@ -90,7 +103,7 @@ link_directories(${CMAKE_SOURCE_DIR}/parser)
 # compile the parser
 add_custom_target(
    extern_lib
-   COMMAND $(MAKE)
+   COMMAND ${CMAKE_MAKE_PROGRAM}
    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/parser
 )
 
